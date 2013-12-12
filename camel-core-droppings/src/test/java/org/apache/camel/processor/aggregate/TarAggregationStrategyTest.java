@@ -19,31 +19,16 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
-public class ConcatenationAggregationStrategyTest extends ContextTestSupport {
+public class TarAggregationStrategyTest extends ContextTestSupport {
 
   public void testAggregate() throws Exception {
     context.setTracing(true);
     
     MockEndpoint mock = getMockEndpoint("mock:end");
     mock.expectedMessageCount(2);
-    mock.expectedBodiesReceived("01234", "56789");
 
     for (int c = 0; c <= 10; c++) {
       template.sendBody("direct:start", String.valueOf(c));
-    }
-
-    assertMockEndpointsSatisfied();
-  }
-
-  public void testAggregateWithNewLine() throws Exception {
-    context.setTracing(true);
-    
-    MockEndpoint mock = getMockEndpoint("mock:endWithNewLine");
-    mock.expectedMessageCount(2);
-    mock.expectedBodiesReceived("0\n1\n2\n3\n4", "5\n6\n7\n8\n9");
-
-    for (int c = 0; c <= 10; c++) {
-      template.sendBody("direct:startWithNewLine", String.valueOf(c));
     }
 
     assertMockEndpointsSatisfied();
@@ -55,16 +40,10 @@ public class ConcatenationAggregationStrategyTest extends ContextTestSupport {
       @Override
       public void configure() throws Exception {
         from("direct:start")
-          .aggregate(constant(true), new ConcatenationAggregationStrategy())
+          .aggregate(constant(true), new TarAggregationStrategy())
           .completionSize(5)
-          .to("log:org.apache.camel.processor.aggregate")
+          //.to("file:///tmp/?fileName=test.tar")
           .to("mock:end");
-        
-        from("direct:startWithNewLine")
-          .aggregate(constant(true), new ConcatenationAggregationStrategy("\n", "UTF-8"))
-          .completionSize(5)
-          .to("log:org.apache.camel.processor.aggregate")
-          .to("mock:endWithNewLine");
       }
     };
   }

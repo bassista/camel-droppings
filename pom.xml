@@ -49,8 +49,14 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-test</artifactId>
+        <artifactId>camel-core</artifactId>
+        <classifier>tests</classifier>
         <version>${camel-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-compress</artifactId>
+        <version>1.6</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
